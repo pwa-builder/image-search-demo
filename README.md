@@ -1,4 +1,4 @@
-# Photo Buddy (rough, working title)
+# Photo Buddy (temporary working title)
 
 ## What is this app?
 This app will auto-capture and recognize receipts (name of merchants/restaurants, item type such as food, transportation, gifts etc and currency/amounts) for various useful purposes, such as adding up amounts spent etc. Crucially, all of the AI image analysis can work locally, enhancing privacy.
