@@ -1,4 +1,32 @@
-# PWA Whisper Starter
+# Photo Buddy (rough, working title)
+
+## What is this app?
+This app will auto-capture and recognize receipts (name of merchants/restaurants, item type such as food, transportation, gifts etc and currency/amounts) for various useful purposes, such as adding up amounts spent etc. Crucially, all of the AI image analysis can work locally, enhancing privacy.
+
+### Who is this for?
+- B2C Consumers – Anyone who are very privacy-conscious and prefer private info like receipts to store ONLY locally on the PCs
+- B2B Commercial – EDU school districts (teachers, students), Governments and Enterprises
+- This is perfect for both sighted and blind/low vision users.
+
+### Supported platforms
+- Can work anywhere, including in the browser.
+- Windows is the main platform that drives design etc. This should feel like a good app on Windows.
+
+## Target user scenario
+- User goes on a trip, lets say to Port Angeles.
+- User spends money and gets receipts while there.
+- User has photos on a windows device, probably through OneDrive from there phone
+- User wants to know how much money they spent in total while in Port Angeles.
+- User adds images to the app and either groups them or searches for "Port Angeles"
+- User can then see the total of what they spent
+
+## Key Technical Features
+- Private: All AI can be run locally, and does by default. Image analysis should ideally happen on the NPU if the device has an NPU, but GPU is our main platform.
+- Fast: Should be fast to open and fast to use
+- Best on Windows: Completely cross-platform but best on Windows
+
+## Getting Started Developing
+This app is built as a [Progressive Web Application](https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/) using the PWABuilder PWA Starter:
 
 [**Straight to Full Documentation**](https://docs.pwabuilder.com/#/starter/quick-start)
 
@@ -6,7 +34,7 @@ The PWABuilder Whisper pwa-starter is based on our opinionated, best practices, 
 
 This "Whisper" version of the starter sets you up with all the code you need to use Whisper to transcribe audio and video, on your device using [transformers.js](https://huggingface.co/docs/transformers.js/index), which uses [Onnxruntime](https://onnxruntime.ai/) to run Whisper client-side on your device, no cloud needed.
 
-## Jump Right In
+### Jump Right In
 
 After you have cloned this starter to your machine, run through the following steps.
 
@@ -21,16 +49,3 @@ And then start developing your app with:
 With that command, the app will open in the browser and will update when you make changes to the code.
 And that's it! Good luck on your Progressive Web App adventure!
 
-## More Info
-
-[![Get started with the pwa-starter!](https://img.youtube.com/vi/u3pWKpmic_k/0.jpg)](https://www.youtube.com/watch?v=u3pWKpmic_k)
-
-With it you get an app that:
-- Has no build system to set up and no boilerplate code to add. Everything is included out of the box.
-- Has a Service Worker system using [Workbox](https://developers.google.com/web/tools/workbox/)
-- Scores close to 100 on Lighthouse out of the box
-- Has everything needed to be installable in the browser
-- Is ready to be package for the app stores using [PWABuilder](https://www.pwabuilder.com)
-- Uses the [Azure Static Web Apps CLI](https://azure.github.io/static-web-apps-cli) which enables emulating your production environment locally, and gets you ready for deploying to Azure Static Web Apps!
-
-and all with just a few button clicks 😊.
