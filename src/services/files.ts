@@ -12,7 +12,7 @@ export async function getLocalFiles(): Promise<FileWithHandle[]> {
     if (files) {
         if (!miniSearch) {
             miniSearch = new MiniSearch({
-                fields: ['name', 'caption'], // fields to index for full-text search
+                fields: ['name', 'caption', 'text', 'classification'], // fields to index for full-text search
                 storeFields: ['name', 'id'] // fields to return with search results
             })
         }
@@ -21,7 +21,6 @@ export async function getLocalFiles(): Promise<FileWithHandle[]> {
         }
 
         miniSearch.addAll(files);
-        return files;
     }
 
     const options = {
@@ -54,11 +53,16 @@ export async function getLocalFiles(): Promise<FileWithHandle[]> {
     for (const blob of blobs) {
         await new Promise((resolve) => {
             aiWorker!.onmessage = async (e: any) => {
-                if (e.data.type === 'caption') {
-                    console.log(e.data.caption[0]);
-                    const usefulObject = await saveToDB(blob, e.data.caption[0].generated_text);
+                if (e.data.type === 'processed') {
+                    console.log(e.data.data.caption[0]);
+                    const captionText = e.data.data.caption[0].generated_text;
+                    console.log("e.data.data", e.data.data);
+                    const imageText = e.data.data.text[0].generated_text;
+                    console.log("imageText", imageText);
+                    const classification = e.data.data.classification[0].label;
+                    const usefulObject = await saveToDB(blob, captionText, imageText, classification);
                     results.push(usefulObject);
-                    resolve(e.data.caption[0]);
+                    resolve(usefulObject);
                 }
             }
 
@@ -69,7 +73,7 @@ export async function getLocalFiles(): Promise<FileWithHandle[]> {
     return results;
 }
 
-export async function saveToDB(blob: FileWithHandle, caption: string) {
+export async function saveToDB(blob: FileWithHandle, caption: string, textFromImage: string, classification: string) {
     // save to indexedDB with idb-keyval
     const { set, get } = await import('idb-keyval');
     const db = await get('photos');
@@ -80,13 +84,15 @@ export async function saveToDB(blob: FileWithHandle, caption: string) {
         lastModified: blob.lastModified,
         size: blob.size,
         caption,
+        classification,
+        text: textFromImage,
         id: Math.random().toString(36).substring(7),
         blob: blob
     };
 
     if (!miniSearch) {
         miniSearch = new MiniSearch({
-            fields: ['name', 'caption'], // fields to index for full-text search
+            fields: ['name', 'caption', 'text', 'classification'], // fields to index for full-text search
             storeFields: ['name', 'id'] // fields to return with search results
         })
     }
@@ -116,6 +122,20 @@ export async function searchDB(query: string) {
 export async function getFromDB() {
     const { get } = await import('idb-keyval');
     const db = await get('photos');
+    if (db) {
+        if (!miniSearch) {
+            miniSearch = new MiniSearch({
+                fields: ['name', 'caption', 'text', 'classification'], // fields to index for full-text search
+                storeFields: ['name', 'id'] // fields to return with search results
+            })
+        }
+        else {
+            miniSearch.removeAll();
+        }
+
+        miniSearch.addAll(db);
+    }
+
     return db;
 };
 

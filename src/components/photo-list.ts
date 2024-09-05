@@ -11,10 +11,10 @@ export class PhotoList extends LitElement {
     static styles = [
         css`
             :host {
-                          display: block;
+              display: block;
 
-                overflow-y: scroll;
-                height: 90vh;
+              overflow-y: scroll;
+              height: 90vh;
             }
 
             :host::-webkit-scrollbar {

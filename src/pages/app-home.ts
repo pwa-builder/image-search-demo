@@ -115,15 +115,24 @@ export class AppHome extends LitElement {
   `];
 
   async firstUpdated() {
-
+    const { getFromDB } = await import("../services/files");
+    const files = await getFromDB();
+    if (files) {
+      this.photoFiles = files;
+    }
   }
 
-  handleSearchFiles(files: any) {
+  async handleSearchFiles(files: any) {
     if (files.length > 0) {
+      console.log("found files", files);
       this.photoFiles = files;
     }
     else {
-      this.loadFiles();
+      const { getFromDB } = await import("../services/files");
+      const files = await getFromDB();
+      if (files) {
+        this.photoFiles = files;
+      }
     }
   }
 
@@ -131,11 +140,8 @@ export class AppHome extends LitElement {
     const { getLocalFiles } = await import('../services/files');
     const files = await getLocalFiles();
     if (files) {
-      this.photoFiles = files;
+      this.photoFiles = [...files, ...this.photoFiles];
       console.log(files);
-
-      // const { captionImage } = await import('../services/image-ai');
-      // await captionImage(files[3]);
     }
   }
 

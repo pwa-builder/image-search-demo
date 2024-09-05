@@ -22,7 +22,7 @@ export class AppSearch extends LitElement {
     ];
 
     async search(queryEvent: any) {
-        console.log(queryEvent.target);
+        console.log(queryEvent.target.value);
         const query = queryEvent.target.value;
         const { searchDB, getSingleFile } = await import('../services/files');
         const results = await searchDB(query);
