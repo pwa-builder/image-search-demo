@@ -1,5 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 import '@shoelace-style/shoelace/dist/components/checkbox/checkbox.js';
@@ -11,6 +12,8 @@ export class PhotoItem extends LitElement {
 
     @state() thumbSrc: any | undefined;
     @state() ani: Animation | undefined;
+    @state() hover: boolean = false;
+    @state() selected: boolean = false
 
     static styles = [
         css`
@@ -39,7 +42,18 @@ export class PhotoItem extends LitElement {
 
                 background: #8080803b;
                 border-radius: 6px;
+
+                transition: scale 0.3s;
             }
+
+            a:hover {
+                scale: 0.98;
+            }
+
+            a.selected {
+               scale: 0.95;
+               border: inset 2px #0078d4;
+           }
 
             #test {
                 z-index: 9999;
@@ -139,40 +153,50 @@ export class PhotoItem extends LitElement {
     }
 
     setupEvents() {
-        this.oncontextmenu = async (event: any) => {
-            event.preventDefault();
+        // this.oncontextmenu = async (event: any) => {
+        //     event.preventDefault();
 
-            const rightClickEl: any = this.shadowRoot?.querySelector('#test');
+        //     const rightClickEl: any = this.shadowRoot?.querySelector('#test');
 
-            if (rightClickEl) {
-                rightClickEl.style.top = `${event.clientY}px`;
-                rightClickEl.style.left = `${event.clientX}px`;
+        //     if (rightClickEl) {
+        //         rightClickEl.style.top = `${event.clientY}px`;
+        //         rightClickEl.style.left = `${event.clientX}px`;
 
-                this.ani = rightClickEl.animate([
-                    { transform: 'translateY(0)', opacity: 0 },
-                    { transform: 'translateY(20px)', opacity: 1 }
-                ], {
-                    duration: 100,
-                    fill: 'both'
-                })
-            }
+        //         this.ani = rightClickEl.animate([
+        //             { transform: 'translateY(0)', opacity: 0 },
+        //             { transform: 'translateY(20px)', opacity: 1 }
+        //         ], {
+        //             duration: 100,
+        //             fill: 'both'
+        //         })
+        //     }
 
-            let that = this;
-            this.shadowRoot?.querySelector('div')?.addEventListener('click', async function close($event) {
-                $event.preventDefault();
-                rightClickEl.animate([
-                    { transform: 'translateY(20px)', opacity: 1 },
-                    { transform: 'translateY(0)', opacity: 0 }
-                ], {
-                    duration: 100,
-                    fill: 'both'
-                });
+        //     let that = this;
+        //     this.shadowRoot?.querySelector('div')?.addEventListener('click', async function close($event) {
+        //         $event.preventDefault();
+        //         rightClickEl.animate([
+        //             { transform: 'translateY(20px)', opacity: 1 },
+        //             { transform: 'translateY(0)', opacity: 0 }
+        //         ], {
+        //             duration: 100,
+        //             fill: 'both'
+        //         });
 
-                that.shadowRoot?.querySelector('div')?.removeEventListener('click', close);
-                $event.preventDefault();
-            });
+        //         that.shadowRoot?.querySelector('div')?.removeEventListener('click', close);
+        //         $event.preventDefault();
+        //     });
 
-        }
+        // }
+
+        // on user hover on this custom element
+        this.addEventListener("mouseenter", () => {
+            console.log("here");
+            this.hover = true;
+        });
+
+        this.addEventListener("mouseleave", () => {
+            this.hover = false;
+        });
     }
 
     private async getThumbnail() {
@@ -272,19 +296,34 @@ export class PhotoItem extends LitElement {
         router.navigate(`/photo/${this.photoItem.id}?id=${this.photoItem.id}&name=${this.photoItem.name}`)
     }
 
+    async selectPhoto() {
+        if (!this.selected) {
+            this.selected = true;
+
+            this.dispatchEvent(new CustomEvent('select', {
+                detail: {
+                    photo: this.photoItem
+                }
+            }));
+        }
+        else {
+            this.selected = false;
+
+            this.dispatchEvent(new CustomEvent('deselect', {
+                detail: {
+                    photo: this.photoItem
+                }
+            }));
+        }
+    }
+
     render() {
         return html`
-        <div>
-            ${this.thumbSrc ? html`<a  @click="${() => this.openPhoto()}">
+        <div class="main">
+            ${this.thumbSrc ? html`<a class=${classMap({ selected: this.selected })} @click="${() => this.selectPhoto()}">
                 <img src=${this.thumbSrc} alt=${this.photoItem.name} />
             </a>
-            ` : html`<fast-skeleton height="11em"></fast-skeleton>`}
-        </div>
-
-        <div id="test">
-            <button @click="${() => this.share()}">Share</button>
-            <button @click="${() => this.download()}">Download</button>
-            <button @click="${() => this.fullscreen()}">Fullscreen</button>
+            ` : html`<sl-skeleton height="11em"></sl-skeleton>`}
         </div>
         `;
     }

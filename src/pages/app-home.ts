@@ -1,17 +1,19 @@
 import { LitElement, css, html } from 'lit';
 import { property, state, customElement } from 'lit/decorators.js';
 
-import '@shoelace-style/shoelace/dist/components/textarea/textarea.js';
+import '@shoelace-style/shoelace/dist/components/input/input.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
+import '@shoelace-style/shoelace/dist/components/drawer/drawer.js';
 
-import { fluentButton, fluentTextArea, provideFluentDesignSystem } from '@fluentui/web-components';
+import { fluentButton, fluentTextField, provideFluentDesignSystem } from '@fluentui/web-components';
 
-provideFluentDesignSystem().register(fluentButton(), fluentTextArea());
+provideFluentDesignSystem().register(fluentButton(), fluentTextField());
 
 import { styles } from '../styles/shared-styles';
 
 import "../components/photo-list";
 import "../components/app-search";
+import "../components/llm-input";
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -22,6 +24,8 @@ export class AppHome extends LitElement {
 
   @state() photoFiles: any[] = [];
 
+  @state() selected: any[] = [];
+
   static styles = [
     styles,
     css`
@@ -31,7 +35,7 @@ export class AppHome extends LitElement {
         gap: 8px;
       }
 
-      #load-files {
+      #home-actions {
           position: fixed;
     top: 10px;
     right: 10px;
@@ -145,17 +149,55 @@ export class AppHome extends LitElement {
     }
   }
 
+  handleSelectedFiles(selectedImages: any) {
+    console.log("selected images", selectedImages);
+    this.selected = selectedImages;
+  }
+
+  async deleteSelectedFiles() {
+    const { deleteFromDB } = await import('../services/files');
+    for (const file of this.selected) {
+      await deleteFromDB(file.id);
+    }
+
+    this.selected = [];
+
+    const { getFromDB } = await import("../services/files");
+    const files = await getFromDB();
+    if (files) {
+      this.photoFiles = files;
+    }
+  }
+
+  async analyzeSelectedFiles() {
+    console.log("analyze selected files", this.selected);
+    const drawer: any = this.shadowRoot?.querySelector('.dialog-overview');
+    await drawer!.show();
+  }
+
 
   render() {
     return html`
+      <sl-drawer label="Analyze" class="dialog-overview">
+        <llm-input></llm-input>
+
+        <sl-button slot="footer" variant="primary">Close</sl-button>
+      </sl-drawer>
+
       <app-header></app-header>
 
       <app-search @search-results="${($event: any) => this.handleSearchFiles($event.detail.results)}"></app-search>
 
-      <fluent-button id="load-files" @click="${() => this.loadFiles()}" appearance="accent">Add Files</fluent-button>
+      <div id="home-actions">
+        ${this.selected && this.selected.length > 0 ? html`
+          <fluent-button appearance="accent" @click="${() => this.analyzeSelectedFiles()}">Analyze</fluent-button>
+          <fluent-button appearance="stealth" @click="${() => this.deleteSelectedFiles()}">Delete Files</fluent-button>
+          ` : null}
+        <fluent-button id="load-files" @click="${() => this.loadFiles()}" appearance="accent">Add Files</fluent-button>
+      </div>
 
       <main>
-        <photo-list .files="${this.photoFiles || []}"></photo-list>
+        <photo-list @select="${($event: CustomEvent) => this.handleSelectedFiles($event.detail.selectedImages)}" .files="${this.photoFiles || []}"></photo-list>
       </main>
     `;
   }

@@ -8,6 +8,8 @@ export class PhotoList extends LitElement {
 
     @property({ type: Array }) files: any[] = [];
 
+    selectedImages: any[] = [];
+
     static styles = [
         css`
             :host {
@@ -54,12 +56,34 @@ export class PhotoList extends LitElement {
         // }
     }
 
+    handleSelect(photoItem: any) {
+        console.log(photoItem);
+        this.selectedImages.push(photoItem);
+
+        this.dispatchEvent(new CustomEvent('select', {
+            detail: {
+                selectedImages: this.selectedImages
+            }
+        }));
+    }
+
+    handleDeselect(photoItem: any) {
+        console.log(photoItem);
+        this.selectedImages = this.selectedImages.filter((item) => item.id !== photoItem.id);
+
+        this.dispatchEvent(new CustomEvent('select', {
+            detail: {
+                selectedImages: this.selectedImages
+            }
+        }));
+    }
+
     render() {
         return html`
           <ul>
             ${this.files.map(file=> html`
               <li>
-                <photo-item .photoItem=${file}></photo-item>
+                <photo-item @select="${($event: CustomEvent) => this.handleSelect($event.detail.photo)}" @deselect="${($event: CustomEvent) => this.handleDeselect($event.detail.photo)}" .photoItem=${file}></photo-item>
               </li>
             `)}
           </ul>

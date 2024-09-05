@@ -139,6 +139,19 @@ export async function getFromDB() {
     return db;
 };
 
+export async function deleteFromDB(id: string) {
+    const { get, set } = await import('idb-keyval');
+    const db = await get('photos');
+    if (db) {
+        const updatedDB = db.filter((file: any) => file.id !== id);
+        await set('photos', updatedDB);
+        if (miniSearch) {
+            miniSearch.removeAll();
+            miniSearch.addAll(updatedDB);
+        }
+    }
+}
+
 export async function getSingleFile(id: string) {
     const db = await getFromDB();
     return db.find((file: any) => file.id === id);
