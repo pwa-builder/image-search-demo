@@ -1,6 +1,5 @@
 import { LitElement, html, css } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js'
-import { getLocalFiles } from '../services/files';
+import { customElement, property } from 'lit/decorators.js'
 
 import './photo-item';
 
