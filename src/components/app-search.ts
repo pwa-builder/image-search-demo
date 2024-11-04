@@ -11,12 +11,38 @@ export class AppSearch extends LitElement {
         css`
             :host {
                 position: fixed;
-                top: 10px;
+                top: 6px;
                 left: 0;
                 right: 0;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+            }
+
+            @media(prefers-color-scheme: dark) {
+              fluent-search {
+                --neutral-fill-input-rest: #2d2d2d;
+                --neutral-fill-input-hover: #2d2d2d;
+                --neutral-fill-input-active: #2d2d2d;
+                --neutral-fill-input-focus: #2d2d2d;
+                background: rgba(255, 255, 255, 0.06);
+                border-radius: 6px;
+
+                fill: white;
+                color: white;
+
+                box-shadow: rgba(0, 0, 0, 0.07) 0px 0px 6px 0px;
+              }
+
+              fluent-search::part(root) {
+                --neutral-fill-input-rest: #2d2d2d;
+                --neutral-fill-input-hover: #2d2d2d;
+                --neutral-fill-input-active: #2d2d2d;
+                --neutral-fill-input-focus: #2d2d2d;
+                background: rgba(255, 255, 255, 0.06);
+                border: none;
+                border-radius: 6px;
+              }
             }
         `
     ];
@@ -49,7 +75,7 @@ export class AppSearch extends LitElement {
 
     render() {
         return html`
-            <fluent-search type="text" @change="${($event: any) => this.search($event)}" placeholder="Search for photos"></fluent-search>
+            <fluent-search type="text" @change="${($event: any) => this.search($event)}" placeholder="Search in Gallery"></fluent-search>
         `;
     }
 }
