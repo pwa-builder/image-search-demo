@@ -21,7 +21,8 @@ html, body {
 
   html,
   body {
-    background-color: #181818;
+    background: rgb(29,32,40);
+    background: linear-gradient(144deg, rgba(29,32,40,1) 0%, rgba(35,39,50,1) 33%, rgba(39,40,40,1) 100%);
     color: white;
   }
 }

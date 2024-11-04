@@ -5,7 +5,7 @@ import { resolveRouterPath } from '../router';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 @customElement('app-header')
 export class AppHeader extends LitElement {
-  @property({ type: String }) title = 'PWA Whisper Starter';
+  @property({ type: String }) title = 'Local Image Search';
 
   @property({ type: Boolean}) enableBack: boolean = false;
 
@@ -14,7 +14,7 @@ export class AppHeader extends LitElement {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: var(--app-color-primary);
+
       color: white;
       padding: 12px;
       padding-top: 4px;
@@ -25,6 +25,8 @@ export class AppHeader extends LitElement {
       height: env(titlebar-area-height, 30px);
       width: env(titlebar-area-width, 100%);
       -webkit-app-region: drag;
+
+      background: transparent;
     }
 
     header h1 {
@@ -43,6 +45,14 @@ export class AppHeader extends LitElement {
       justify-content: space-between;
       align-items: center;
       gap: 8px;
+
+      margin-top: 7px;
+    }
+
+    #back-button-block img {
+      height: 22px;
+      width: 22px;
+      filter: invert(1);
     }
 
     @media(prefers-color-scheme: light) {
@@ -52,6 +62,10 @@ export class AppHeader extends LitElement {
 
       nav a {
         color: initial;
+      }
+
+      #back-button-block img {
+        filter: invert(0)
       }
     }
   `;
@@ -65,7 +79,7 @@ export class AppHeader extends LitElement {
             Back
           </sl-button>` : null}
 
-          <h1>${this.title}</h1>
+          <img src="https://unpkg.com/ionicons@7.1.0/dist/svg/images-outline.svg" alt="app icon">
         </div>
       </header>
     `;
