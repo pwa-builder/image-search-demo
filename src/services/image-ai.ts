@@ -7,13 +7,11 @@ let classifyPipeline: ImageClassificationPipeline | undefined = undefined;
 self.onmessage = async (e) => {
     if (e.data.type === 'caption') {
         return new Promise(async (resolve) => {
-            const caption = await captionImage(e.data.blob);
             const classification = await classifyImage(e.data.blob);
-            const foundText = await getTextFromImage(e.data.blob);
 
             const imageData = {
-                caption,
-                text: foundText,
+                caption: "",
+                text: "",
                 classification
             };
 

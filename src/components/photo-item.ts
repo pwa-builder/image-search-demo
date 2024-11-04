@@ -52,7 +52,7 @@ export class PhotoItem extends LitElement {
 
             a.selected {
                scale: 0.95;
-               border: inset 2px #0078d4;
+               box-shadow: #ffffff85 0px 0px 10px;
            }
 
             #test {

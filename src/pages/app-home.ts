@@ -5,15 +5,14 @@ import '@shoelace-style/shoelace/dist/components/input/input.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/drawer/drawer.js';
 
-import { fluentButton, fluentTextField, provideFluentDesignSystem } from '@fluentui/web-components';
+import { fluentButton, fluentTextField, fluentProgressRing, provideFluentDesignSystem } from '@fluentui/web-components';
 
-provideFluentDesignSystem().register(fluentButton(), fluentTextField());
+provideFluentDesignSystem().register(fluentButton(), fluentTextField(), fluentProgressRing());
 
 import { styles } from '../styles/shared-styles';
 
 import "../components/photo-list";
 import "../components/app-search";
-import "../components/llm-input";
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -26,6 +25,8 @@ export class AppHome extends LitElement {
 
   @state() selected: any[] = [];
 
+  @state() loading: boolean = false;
+
   static styles = [
     styles,
     css`
@@ -37,8 +38,12 @@ export class AppHome extends LitElement {
 
       #home-actions {
           position: fixed;
-    top: 10px;
-    right: 10px;
+          top: 7px;
+          right: 10px;
+      }
+
+      #load-files {
+        width: 64px;
       }
 
       fluent-button svg {
@@ -97,6 +102,11 @@ export class AppHome extends LitElement {
         flex-direction: column;
       }
 
+      fluent-progress-ring {
+        width: 22px;
+        height: 22px;
+      }
+
       @media(prefers-color-scheme: dark) {
         fluent-text-area::part(control) {
             background: #ffffff0f;
@@ -141,12 +151,15 @@ export class AppHome extends LitElement {
   }
 
   async loadFiles() {
+    this.loading = true;
     const { getLocalFiles } = await import('../services/files');
     const files = await getLocalFiles();
     if (files) {
       this.photoFiles = [...files, ...this.photoFiles];
       console.log(files);
     }
+
+    this.loading = false;
   }
 
   handleSelectedFiles(selectedImages: any) {
@@ -178,12 +191,6 @@ export class AppHome extends LitElement {
 
   render() {
     return html`
-      <sl-drawer label="Analyze" class="dialog-overview">
-        <llm-input></llm-input>
-
-        <sl-button slot="footer" variant="primary">Close</sl-button>
-      </sl-drawer>
-
       <app-header></app-header>
 
       <app-search @search-results="${($event: any) => this.handleSearchFiles($event.detail.results)}"></app-search>
@@ -193,11 +200,15 @@ export class AppHome extends LitElement {
           <fluent-button appearance="accent" @click="${() => this.analyzeSelectedFiles()}">Analyze</fluent-button>
           <fluent-button appearance="stealth" @click="${() => this.deleteSelectedFiles()}">Delete Files</fluent-button>
           ` : null}
-        <fluent-button id="load-files" @click="${() => this.loadFiles()}" appearance="accent">Add Files</fluent-button>
+        <fluent-button ?disabled="${this.loading}" id="load-files" @click="${() => this.loadFiles()}">
+          ${this.loading ? html`
+              <fluent-progress-ring></fluent-progress-ring>
+            ` : "Import"}
+        </fluent-button>
       </div>
 
       <main>
-        <photo-list @select="${($event: CustomEvent) => this.handleSelectedFiles($event.detail.selectedImages)}" .files="${this.photoFiles || []}"></photo-list>
+        <photo-list @import="${() => this.loadFiles()}" @select="${($event: CustomEvent) => this.handleSelectedFiles($event.detail.selectedImages)}" .files="${this.photoFiles || []}"></photo-list>
       </main>
     `;
   }

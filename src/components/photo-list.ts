@@ -1,5 +1,9 @@
 import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js'
+import { customElement, property, state } from 'lit/decorators.js';
+
+import { fluentButton, fluentProgressRing, provideFluentDesignSystem } from '@fluentui/web-components';
+
+provideFluentDesignSystem().register(fluentButton(), fluentProgressRing());
 
 import './photo-item';
 
@@ -7,6 +11,8 @@ import './photo-item';
 export class PhotoList extends LitElement {
 
     @property({ type: Array }) files: any[] = [];
+
+    @state() loading: boolean = false;
 
     selectedImages: any[] = [];
 
@@ -27,11 +33,29 @@ export class PhotoList extends LitElement {
                 list-style: none;
                 padding: 0;
                 margin: 0;
+                margin-top: 10px;
 
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
                 grid-auto-rows: minmax(150px, auto);
                 grid-gap: 12px
+            }
+
+            #welcome-block {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              margin-top: 4em;
+            }
+
+            #welcome-block h2 {
+              font-size: 38px;
+              margin-bottom: 0px;
+            }
+
+            #welcome-block p {
+              font-size: 14px;
+              margin-bottom: 20px;
             }
         `
     ];
@@ -78,15 +102,30 @@ export class PhotoList extends LitElement {
         }));
     }
 
+    handleImportClick() {
+      this.loading = true;
+      this.dispatchEvent(new CustomEvent('import'))
+    }
+
     render() {
         return html`
-          <ul>
+          ${this.files.length > 0 ? html`<ul>
             ${this.files.map(file=> html`
               <li>
                 <photo-item @select="${($event: CustomEvent) => this.handleSelect($event.detail.photo)}" @deselect="${($event: CustomEvent) => this.handleDeselect($event.detail.photo)}" .photoItem=${file}></photo-item>
               </li>
             `)}
-          </ul>
+          </ul>` : html`
+            <div id="welcome-block">
+              <h2>Local Image Search</h2>
+
+              <p>Import your photos and search through them based on the content of the photos, all on your device!</p>
+
+              <fluent-button ?disabled="${this.loading}" appearance="accent" @click="${() => this.handleImportClick()}">
+                Import Photos
+              </fluent-button>
+            </div>
+          `}
 
         `;
     }

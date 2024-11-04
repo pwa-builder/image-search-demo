@@ -55,9 +55,9 @@ export async function getLocalFiles(): Promise<FileWithHandle[]> {
             aiWorker!.onmessage = async (e: any) => {
                 if (e.data.type === 'processed') {
                     console.log(e.data.data.caption[0]);
-                    const captionText = e.data.data.caption[0].generated_text;
+                    const captionText = "";
                     console.log("e.data.data", e.data.data);
-                    const imageText = e.data.data.text[0].generated_text;
+                    const imageText = "";
                     console.log("imageText", imageText);
                     const classification = e.data.data.classification[0].label;
                     const usefulObject = await saveToDB(blob, captionText, imageText, classification);
