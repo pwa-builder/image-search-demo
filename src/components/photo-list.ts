@@ -22,7 +22,9 @@ export class PhotoList extends LitElement {
               display: block;
 
               overflow-y: scroll;
-              height: 90vh;
+              height: 93vh;
+
+              margin-top: 10px;
             }
 
             :host::-webkit-scrollbar {
@@ -33,7 +35,6 @@ export class PhotoList extends LitElement {
                 list-style: none;
                 padding: 0;
                 margin: 0;
-                margin-top: 10px;
 
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
