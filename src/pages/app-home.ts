@@ -107,6 +107,11 @@ export class AppHome extends LitElement {
         height: 22px;
       }
 
+      #delete-button::part(control) {
+        background: #ff110085;
+        color: white;
+      }
+
       @media(prefers-color-scheme: dark) {
         fluent-text-area::part(control) {
             background: #ffffff0f;
@@ -115,6 +120,13 @@ export class AppHome extends LitElement {
 
         fluent-button.neutral::part(control) {
           background: #ffffff14;
+          color: white;
+        }
+      }
+
+      @media(prefers-color-scheme: light) {
+        #delete-button::part(control) {
+          background: red;
           color: white;
         }
       }
@@ -203,7 +215,7 @@ export class AppHome extends LitElement {
 
       <div id="home-actions">
         ${this.selected && this.selected.length > 0 ? html`
-          <fluent-button appearance="stealth" @click="${() => this.deleteSelectedFiles()}">Delete Files</fluent-button>
+          <fluent-button id="delete-button" appearance="danger" @click="${() => this.deleteSelectedFiles()}">Delete Files</fluent-button>
           ` : null}
         <fluent-button ?disabled="${this.loading}" id="load-files" @click="${() => this.loadFiles()}">
           ${this.loading ? html`
