@@ -30,6 +30,7 @@ export class PhotoItem extends LitElement {
                 opacity: 0;
                 animation: fadein 1s;
                 animation-fill-mode: forwards;
+                content-visibility: auto;
             }
 
             a {
