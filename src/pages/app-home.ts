@@ -152,14 +152,20 @@ export class AppHome extends LitElement {
 
   async loadFiles() {
     this.loading = true;
-    const { getLocalFiles } = await import('../services/files');
-    const files = await getLocalFiles();
-    if (files) {
-      this.photoFiles = [...files, ...this.photoFiles];
-      console.log(files);
-    }
 
-    this.loading = false;
+    try {
+      const { getLocalFiles } = await import('../services/files');
+      const files = await getLocalFiles();
+      if (files) {
+        this.photoFiles = [...files, ...this.photoFiles];
+        console.log(files);
+      }
+
+      this.loading = false;
+    }
+    catch (err) {
+      this.loading = false;
+    }
   }
 
   handleSelectedFiles(selectedImages: any) {
@@ -197,7 +203,6 @@ export class AppHome extends LitElement {
 
       <div id="home-actions">
         ${this.selected && this.selected.length > 0 ? html`
-          <fluent-button appearance="accent" @click="${() => this.analyzeSelectedFiles()}">Analyze</fluent-button>
           <fluent-button appearance="stealth" @click="${() => this.deleteSelectedFiles()}">Delete Files</fluent-button>
           ` : null}
         <fluent-button ?disabled="${this.loading}" id="load-files" @click="${() => this.loadFiles()}">
